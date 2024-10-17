@@ -1,0 +1,99 @@
+package com.gildedrose;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MiSolucion {
+    public List<Item> items;
+    private final Map<String, ItemProcessor> processors = new HashMap<>();
+
+    public MiSolucion(List<Item> items) {
+        this.items = items;
+        processors.put("Aged Brie", new AgedBrieProcessor());
+        processors.put("Sulfuras, Hand of Ragnaros", new SulfurasProcessor());
+        processors.put("Conjured Mana Cake", new ConjuredProcessor());
+        processors.put("Backstage passes to a TAFKAL80ETC concert", new BackstagePassProcessor());
+    }
+
+    public void updateQuality() {
+        for (Item item : items) {
+            ItemProcessor processor = processors.getOrDefault(item.name, new DefaultProcessor());
+            processor.updateItem(item);
+        }
+    }
+
+    @Override
+    public String toString() {
+        String salida = "name, sellIn, quality\n";
+        for (Item item : items) {
+            salida += item.getName() + " , " + item.getSellIn() + " , " + item.getQuality() + "\n";
+        }
+        return salida;
+    }
+}
+
+abstract class ItemProcessor {
+    public abstract void updateItem(Item item);
+}
+
+class AgedBrieProcessor extends ItemProcessor {
+    @Override
+    public void updateItem(Item item) {
+        item.quality = item.getQuality() + 1;
+        item.sellIn = item.getSellIn() - 1;
+        qualityValidator(item);
+    }
+}
+
+class SulfurasProcessor extends ItemProcessor {
+    @Override
+    public void updateItem(Item item) {
+        // No changes for Sulfuras
+    }
+}
+
+class ConjuredProcessor extends ItemProcessor {
+    @Override
+    public void updateItem(Item item) {
+        item.quality = item.getQuality() - 2;
+        item.sellIn = item.getSellIn() - 1;
+        qualityValidator(item);
+    }
+}
+
+class BackstagePassProcessor extends ItemProcessor {
+    @Override
+    public void updateItem(Item item) {
+        if (item.getSellIn() < 0) {
+            item.quality = 0;
+        } else if (item.getSellIn() < 6) {
+            item.quality = item.getQuality() + 3;
+        } else if (item.getSellIn() < 11) {
+            item.quality = item.getQuality() + 2;
+        } else {
+            item.quality = item.getQuality() + 1;
+        }
+        item.sellIn = item.getSellIn() - 1;
+        qualityValidator(item);
+    }
+}
+
+class DefaultProcessor extends ItemProcessor {
+    @Override
+    public void updateItem(Item item) {
+        item.quality = item.getQuality() - 1;
+        item.sellIn = item.getSellIn() - 1;
+        qualityValidator(item);
+    }
+}
+
+// Reutilizamos el qualityValidator del método anterior
+void qualityValidator(Item item) {
+    if (item.quality < 0) {
+        item.quality = 0;
+    }
+    if (item.quality > 50) {
+        item.quality = 50;
+    }
+}
