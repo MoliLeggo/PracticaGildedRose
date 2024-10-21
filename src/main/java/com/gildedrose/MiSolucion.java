@@ -1,6 +1,6 @@
 package com.gildedrose;
 
-//leggo changes:
+//leggo changes:cambio
 
 import java.util.List;
 public class MiSolucion {
