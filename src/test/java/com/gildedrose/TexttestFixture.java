@@ -1,5 +1,8 @@
 package com.gildedrose;
 
+import com.gildedrose.aplication.MiSolucion;
+import com.gildedrose.domain.Item;
+
 import java.util.ArrayList;
 import java.util.List;
 

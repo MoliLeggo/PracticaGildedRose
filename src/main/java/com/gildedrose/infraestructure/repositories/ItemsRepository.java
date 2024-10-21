@@ -1,33 +1,10 @@
-package com.gildedrose;
+package com.gildedrose.infraestructure.repositories;
 
-//leggo changes:cambio
+import com.gildedrose.domain.Item;
 
-import java.util.List;
-public class MiSolucion {
-    public List<Item> items;
-    public MiSolucion(List<Item> items) {
-        this.items = items;
-    }
-    public void updateQuality() {
+public class ItemsRepository {
 
-        for (Item itemx : items) {
 
-            if (itemx.getName().equals("Aged Brie")) {
-                dailyUpdateAged(itemx);
-
-            }else if(itemx.getName().equals("Sulfuras, Hand of Ragnaros")) {
-
-            }else if(itemx.getName().equals("Conjured Mana Cake")) {
-                dailyUpdateConjured(itemx);
-
-            }else if (itemx.getName().equals("Backstage passes to a TAFKAL80ETC concert")) {
-                dailyUpdateBackstage(itemx);
-
-            }else{
-                dailyDegradation(itemx);
-            }
-        }
-    }
     public void dailyUpdateAged(Item item){
 
         item.sellIn = item.getSellIn() -1;
@@ -85,15 +62,5 @@ public class MiSolucion {
         if (item.quality > 49) {
             item.quality = 50;
         }
-    }
-
-    @Override
-    public String toString() {
-        String salida = "name, sellIn, quality" + "\n" ;
-
-        for (Item item : items){
-            salida += item.getName() + ", " + item.getSellIn() + ", " + item.getQuality() + "\n";
-        }
-        return salida;
     }
 }

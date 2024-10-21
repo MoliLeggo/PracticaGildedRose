@@ -1,4 +1,6 @@
-package com.gildedrose;
+package com.gildedrose.aplication;
+
+import com.gildedrose.domain.Item;
 
 public class GildedRose {
     public Item[] items;
