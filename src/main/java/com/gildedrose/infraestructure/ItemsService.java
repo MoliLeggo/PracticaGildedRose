@@ -1,8 +1,8 @@
-package com.gildedrose.infraestructure.repositories;
+package com.gildedrose.infraestructure;
 
 import com.gildedrose.domain.Item;
 
-public class ItemsRepository {
+public class ItemsService {
 
 
     public void dailyUpdateAged(Item item){
