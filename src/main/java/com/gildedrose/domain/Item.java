@@ -16,7 +16,6 @@ public class Item {
 
         return this.name.getDisplayName() + ", " + this.sellIn + ", " + this.quality + "\n";
     }
-
     public ItemType getName() {
         return name;
     }
@@ -26,6 +25,4 @@ public class Item {
     public int getQuality() {
         return quality;
     }
-
-
 }

@@ -13,7 +13,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UpdateDailyValuesTest {
-
     private UpdateDailyValues updateDailyValues;
     private List<Item> items;
 
@@ -24,7 +23,8 @@ public class UpdateDailyValuesTest {
                 new Item(ItemType.ELIXIR, 5, 7),
                 new Item(ItemType.SULFURAS, 0, 80),
                 new Item(ItemType.BACKSTAGE_PASS, 15, 20),
-                new Item(ItemType.CONJURED, 3, 6)
+                new Item(ItemType.CONJURED, 3, 6),
+                new Item(ItemType.AGED_BRIE_CONJURED, 2, 0)
         );
         updateDailyValues = new UpdateDailyValues(items);
     }
@@ -68,7 +68,6 @@ public class UpdateDailyValuesTest {
         assertEquals(14, backstage.getSellIn());
         assertEquals(21, backstage.getQuality());
     }
-
     @Test
     public void testUpdateQualityConjured() {
         Item conjured = items.get(4);
@@ -77,5 +76,14 @@ public class UpdateDailyValuesTest {
         assertEquals(ItemType.CONJURED.getDisplayName(), conjured.getName().getDisplayName());
         assertEquals(2, conjured.getSellIn());
         assertEquals(4, conjured.getQuality());
+    }
+    @Test
+    public void testUpdateQualityAgedBrieConjured() {
+        Item agedBrieConjured = items.get(5);
+        updateDailyValues.updateQuality();
+
+        assertEquals(ItemType.AGED_BRIE_CONJURED.getDisplayName(), agedBrieConjured.getName().getDisplayName());
+        assertEquals(1, agedBrieConjured.getSellIn());
+        assertEquals(0, agedBrieConjured.getQuality());
     }
 }
