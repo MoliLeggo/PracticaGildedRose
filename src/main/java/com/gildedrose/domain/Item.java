@@ -1,28 +1,24 @@
 package com.gildedrose.domain;
 
-public class Item {
-    private ItemType name;
-    public int sellIn;
-    public int quality;
+import java.util.List;
 
-    public Item(ItemType name, int sellIn, int quality) {
-        this.name = name;
-        this.sellIn = sellIn;
-        this.quality = quality;
-    }
+public interface Item {
+    String getName();
+    int getSellIn();
+    int getQuality();
+    List<ItemType> getTypes();
+    void updateQuality();
 
-    @Override
-    public String toString() {
-
-        return this.name.getDisplayName() + ", " + this.sellIn + ", " + this.quality + "\n";
+    // Default method for quality validation
+    default void qualityValidator() {
+        if (getQuality() < 0) {
+            setQuality(0);
+        }
+        if (getQuality() > 50) {
+            setQuality(50);
+        }
     }
-    public ItemType getName() {
-        return name;
-    }
-    public int getSellIn() {
-        return sellIn;
-    }
-    public int getQuality() {
-        return quality;
-    }
+    void setSellIn(int sellIn);
+    void setQuality(int quality);
 }
+

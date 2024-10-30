@@ -1,11 +1,10 @@
 package com.gildedrose;
 
+
 import com.gildedrose.aplication.UpdateDailyValues;
-import com.gildedrose.domain.Item;
-import com.gildedrose.domain.ItemType;
+import com.gildedrose.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,75 +14,46 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UpdateDailyValuesTest {
     private UpdateDailyValues updateDailyValues;
     private List<Item> items;
-
     @BeforeEach
     public void setUp() {
         items = Arrays.asList(
-                new Item(ItemType.AGED_BRIE, 2, 0),
-                new Item(ItemType.ELIXIR, 5, 7),
-                new Item(ItemType.SULFURAS, 0, 80),
-                new Item(ItemType.BACKSTAGE_PASS, 15, 20),
-                new Item(ItemType.CONJURED, 3, 6),
-                new Item(ItemType.AGED_BRIE_CONJURED, 2, 0)
+                new AgedBrieItem("Aged Brie", 2, 0, List.of(ItemType.AGED_BRIE)),
+                new ConjuredItem("Conjured Mana Cake", 3, 16, List.of(ItemType.CONJURED)),
+                new UniversalItem("Universal", 6, 20, List.of(ItemType.AGED_BRIE, ItemType.CONJURED)),
+                new BackstagePassItem("Backstage", 20, 20, List.of(ItemType.BACKSTAGE_PASS))
         );
         updateDailyValues = new UpdateDailyValues(items);
     }
-
     @Test
-    public void testUpdateQualityAgedBrie() {
+    public void testFourDaysDegradation() {
+        for (int day = 1; day <= 4; day++) {
+            updateDailyValues.updateQuality();
+        }
+
+        // Verificar resultados después de 4 días
         Item agedBrie = items.get(0);
-        updateDailyValues.updateQuality();
+        Item conjured = items.get(1);
+        Item agedBrieConjured = items.get(2);
+        Item backStage = items.get(3);
 
-        assertEquals(ItemType.AGED_BRIE.getDisplayName(), agedBrie.getName().getDisplayName());
-        assertEquals(1, agedBrie.getSellIn());
-        assertEquals(1, agedBrie.getQuality());
-    }
+        // Aged Brie después de 4 días
+        assertEquals("Aged Brie", agedBrie.getName());
+        assertEquals(-2, agedBrie.getSellIn());
+        assertEquals(6, agedBrie.getQuality());
 
-    @Test
-    public void testUpdateQualityElixir() {
-        Item elixir = items.get(1);
-        updateDailyValues.updateQuality();
+        // Conjured Mana Cake después de 4 días
+        assertEquals("Conjured Mana Cake", conjured.getName());
+        assertEquals(-1, conjured.getSellIn());
+        assertEquals(6, conjured.getQuality());
 
-        assertEquals(ItemType.ELIXIR.getDisplayName(), elixir.getName().getDisplayName());
-        assertEquals(4, elixir.getSellIn());
-        assertEquals(6, elixir.getQuality());
-    }
+        // Aged Brie Conjured después de 4 días
+        assertEquals("Universal", agedBrieConjured.getName());
+        assertEquals(2, agedBrieConjured.getSellIn());
+        assertEquals(16, agedBrieConjured.getQuality());
 
-    @Test
-    public void testUpdateQualitySulfuras() {
-        Item sulfuras = items.get(2);
-        updateDailyValues.updateQuality();
-
-        assertEquals(ItemType.SULFURAS.getDisplayName(), sulfuras.getName().getDisplayName());
-        assertEquals(0, sulfuras.getSellIn());
-        assertEquals(80, sulfuras.getQuality());
-    }
-
-    @Test
-    public void testUpdateQualityBackstagePass() {
-        Item backstage = items.get(3);
-        updateDailyValues.updateQuality();
-
-        assertEquals(ItemType.BACKSTAGE_PASS.getDisplayName(), backstage.getName().getDisplayName());
-        assertEquals(14, backstage.getSellIn());
-        assertEquals(21, backstage.getQuality());
-    }
-    @Test
-    public void testUpdateQualityConjured() {
-        Item conjured = items.get(4);
-        updateDailyValues.updateQuality();
-
-        assertEquals(ItemType.CONJURED.getDisplayName(), conjured.getName().getDisplayName());
-        assertEquals(2, conjured.getSellIn());
-        assertEquals(4, conjured.getQuality());
-    }
-    @Test
-    public void testUpdateQualityAgedBrieConjured() {
-        Item agedBrieConjured = items.get(5);
-        updateDailyValues.updateQuality();
-
-        assertEquals(ItemType.AGED_BRIE_CONJURED.getDisplayName(), agedBrieConjured.getName().getDisplayName());
-        assertEquals(1, agedBrieConjured.getSellIn());
-        assertEquals(0, agedBrieConjured.getQuality());
+        //BackStage despues de 4 dias
+        assertEquals("Backstage", backStage.getName());
+        assertEquals(16, backStage.getSellIn());
+        assertEquals(28, backStage.getQuality());
     }
 }

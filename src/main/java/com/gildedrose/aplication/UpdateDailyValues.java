@@ -1,36 +1,46 @@
 package com.gildedrose.aplication;
 
 import com.gildedrose.domain.Item;
-import com.gildedrose.infraestructure.service.*;
+import com.gildedrose.domain.ItemType;
+import com.gildedrose.domain.UniversalItem;
+
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class UpdateDailyValues {
 
-    public List<Item> items;
-    public final Map<String, ItemUpdater> updateMethods;
-    public UpdateDailyValues(List<Item>items) {
+    private List<Item> items;
+
+    public UpdateDailyValues(List<Item> items) {
         this.items = items;
-        this.updateMethods = Map.of(
-                "Aged Brie", new AgedBrieUpdater(),
-                "Sulfuras, Hand of Ragnaros", item -> {},
-                "Conjured Mana Cake", new ConjuredUpdater(),
-                "Backstage passes to a TAFKAL80ETC concert", new BackstagePassUpdater()
-        );
     }
 
     public void updateQuality() {
-        items.stream()
-                .collect(Collectors.groupingBy(item -> updateMethods.getOrDefault(item.getName().getDisplayName(), new DefaultUpdater())))
-                .forEach((updateMethod, itemList) -> itemList.forEach(updateMethod::update));
+        items.forEach(item -> {
+                    int initialSellIn = item.getSellIn();
+                    List<ItemType> types = item.getTypes();
+
+                    if (types.isEmpty() || types.size() > 1) {
+                        UniversalItem universalItem = new UniversalItem(item.getName(), initialSellIn, item.getQuality(), types);
+                        universalItem.updateQuality();
+                        item.setSellIn(universalItem.getSellIn());
+                        item.setQuality(universalItem.getQuality());
+                    } else {
+                        item.updateQuality();
+                        item.qualityValidator();
+                    }
+                    // Ajustar sellIn restando 1 solo una vez, si hay más de un tipo
+                    if (item.getTypes().size() > 1) {
+                        item.setSellIn(initialSellIn - (item.getTypes().size() - 1));
+                    }
+                }
+        );
     }
 
     @Override
     public String toString() {
-        String salida = "name, sellIn, quality" + "\n" ;
+        String salida = "name, sellIn, quality" + "\n";
 
-        for (Item item : items){
+        for (Item item : items) {
             salida += item.getName() + ", " + item.getSellIn() + ", " + item.getQuality() + "\n";
         }
         return salida;
