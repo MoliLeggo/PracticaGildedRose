@@ -14,16 +14,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class UpdateDailyValuesTest {
     private UpdateDailyValues updateDailyValues;
     private List<Item> items;
+
     @BeforeEach
     public void setUp() {
         items = Arrays.asList(
-                new AgedBrieItem("Aged Brie", 2, 0, List.of(ItemType.AGED_BRIE)),
-                new ConjuredItem("Conjured Mana Cake", 3, 16, List.of(ItemType.CONJURED)),
+                new UniversalItem("Aged Brie", 2, 0, List.of(ItemType.AGED_BRIE)),
+                new UniversalItem("Conjured Mana Cake", 3, 16, List.of(ItemType.CONJURED)),
                 new UniversalItem("Universal", 6, 20, List.of(ItemType.AGED_BRIE, ItemType.CONJURED)),
-                new BackstagePassItem("Backstage", 20, 20, List.of(ItemType.BACKSTAGE_PASS))
+                new UniversalItem("Backstage", 20, 20, List.of(ItemType.BACKSTAGE_PASS)),
+                new UniversalItem("Sulfuras, Hand of Ragnaros", 0, 80, List.of(ItemType.LEGENDARY)),
+                new UniversalItem("Leggo staff", 2, 3, List.of(ItemType.CONJURED, ItemType.AGED_BRIE, ItemType.LEGENDARY))
         );
         updateDailyValues = new UpdateDailyValues(items);
     }
+
     @Test
     public void testFourDaysDegradation() {
         for (int day = 1; day <= 4; day++) {
@@ -35,6 +39,8 @@ public class UpdateDailyValuesTest {
         Item conjured = items.get(1);
         Item agedBrieConjured = items.get(2);
         Item backStage = items.get(3);
+        Item legendary = items.get(4);
+        Item conjuredLegendaryAgedBrie = items.get(5);
 
         // Aged Brie después de 4 días
         assertEquals("Aged Brie", agedBrie.getName());
@@ -55,5 +61,17 @@ public class UpdateDailyValuesTest {
         assertEquals("Backstage", backStage.getName());
         assertEquals(16, backStage.getSellIn());
         assertEquals(28, backStage.getQuality());
+
+        //Legendary despues de 4 dias
+        assertEquals("Sulfuras, Hand of Ragnaros", legendary.getName());
+        assertEquals(0, legendary.getSellIn());
+        assertEquals(80, legendary.getQuality());
+
+        //Conjured Aged y Legendary despues de 4 dias
+        assertEquals("Leggo staff", conjuredLegendaryAgedBrie.getName());
+        assertEquals(2, conjuredLegendaryAgedBrie.getSellIn());
+        assertEquals(3, conjuredLegendaryAgedBrie.getQuality());
+
+
     }
 }

@@ -19,6 +19,10 @@ public class UpdateDailyValues {
                     int initialSellIn = item.getSellIn();
                     List<ItemType> types = item.getTypes();
 
+                    // Verificar si el ítem es legendario y no modificar si lo es
+                    if (types.contains(ItemType.LEGENDARY)) {
+                        return;
+                    }
                     if (types.isEmpty() || types.size() > 1) {
                         UniversalItem universalItem = new UniversalItem(item.getName(), initialSellIn, item.getQuality(), types);
                         universalItem.updateQuality();

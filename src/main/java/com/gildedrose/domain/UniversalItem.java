@@ -1,12 +1,24 @@
 package com.gildedrose.domain;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UniversalItem implements Item{
     private String name;
     private int sellIn;
     private int quality;
     private List<ItemType> types;
+
+    private static final Map<ItemType, ItemUpdater> updaterMap = new HashMap<>();
+
+    static {
+        updaterMap.put(ItemType.AGED_BRIE, new AgedBrieUpdater());
+        updaterMap.put(ItemType.CONJURED, new ConjuredUpdater());
+        updaterMap.put(ItemType.LEGENDARY, new LegendaryUpdater());
+        updaterMap.put(ItemType.BACKSTAGE_PASS, new BackstagePassUpdater());
+        // Agrega más tipos aquí según sea necesario
+    }
     public UniversalItem(String name, int sellIn, int quality, List<ItemType> types) {
         this.name = name;
         this.sellIn = sellIn;
@@ -31,41 +43,17 @@ public class UniversalItem implements Item{
     }
     @Override
     public void updateQuality() {
+
         if (types.isEmpty()) {
             updateDefault();
         } else {
-            types.forEach(this::applyUpdate);
+            types.forEach(type -> {
+                ItemUpdater updater = updaterMap.getOrDefault(type, item -> updateDefault());
+                updater.updateQuality(this);
+            });
         }
-        qualityValidator();
-    }
-    private void applyUpdate(ItemType type) {
-        switch (type) {
-            case AGED_BRIE:
-                AgedBrieItem agedBrie = new AgedBrieItem(name, sellIn, quality, types);
-                agedBrie.updateQuality();
-                this.sellIn = agedBrie.getSellIn();
-                this.quality = agedBrie.getQuality();
-                break;
-            case CONJURED:
-                ConjuredItem conjured = new ConjuredItem(name, sellIn, quality, types);
-                conjured.updateQuality();
-                this.sellIn = conjured.getSellIn();
-                this.quality = conjured.getQuality();
-                break;
-            // Agrega más casos aquí según sea necesario
-            default:
-                updateDefault();
-                break;
-        }
-    }
-    private void updateDefault() {
-        sellIn--;
-        if (sellIn < 0) {
-            quality -= 2;// Suma el valor del operando derecho del valor del operando izquierdo y luego asigna el resultado al operando izquierdo.
-        } else {
-            quality -= 1;
-        }
-        qualityValidator();
+        qualityValidator(); // Validar la calidad
+
     }
     @Override
     public void setSellIn(int sellIn) {
@@ -74,15 +62,6 @@ public class UniversalItem implements Item{
     @Override
     public void setQuality(int quality) {
         this.quality = quality;
-    }
-    @Override
-    public void qualityValidator() {
-        if (quality < 0) {
-            quality = 0;
-        }
-        if (quality > 50) {
-            quality = 50;
-        }
     }
     @Override
     public String toString() {

@@ -9,7 +9,15 @@ public interface Item {
     List<ItemType> getTypes();
     void updateQuality();
 
-    // Default method for quality validation
+    default void updateDefault() {
+        setSellIn(getSellIn() - 1);
+        if (getSellIn() < 0) {
+            setQuality(getQuality() -2);
+        } else {
+            setQuality(getQuality() - 1);
+        }
+    }
+
     default void qualityValidator() {
         if (getQuality() < 0) {
             setQuality(0);
